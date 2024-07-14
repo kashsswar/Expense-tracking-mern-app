@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  backend:
+    build: 
+      context: ./server
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=db
+      - DB_USER=youruser
+      - DB_PASSWORD=yourpassword
+      - DB_NAME=finance_tracker
+      - JWT_SECRET=your_jwt_secret
+    volumes:
+      - ./server:/usr/src/app
+      - /usr/src/app/node_modules
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./client
+    ports:
+      - "80:80"
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - ./client:/usr/src/app
+      - /usr/src/app/node_modules
+
+  db:
+    image: postgres:13
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: finance_tracker
+      POSTGRES_USER: youruser
+      POSTGRES_PASSWORD: yourpassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
